@@ -1,0 +1,32 @@
+#!/bin/bash
+
+PHONEBOOK_FILE="phonebook.txt"
+
+case "$1" in
+    "new")
+        echo "$2 $3" >> "$PHONEBOOK_FILE"
+        echo "Entry added: $2 $3"
+        ;;
+    "list")
+        if [ -s "$PHONEBOOK_FILE" ]; then
+            cat "$PHONEBOOK_FILE"
+        else
+            echo "Phonebook is empty"
+        fi
+        ;;
+    "remove")
+        grep -v "^$2" "$PHONEBOOK_FILE" > "$PHONEBOOK_FILE.tmp" && mv "$PHONEBOOK_FILE.tmp" "$PHONEBOOK_FILE"
+        echo "Entries for $2 removed"
+        ;;
+    "clear")
+        > "$PHONEBOOK_FILE"
+        echo "Phonebook cleared"
+        ;;
+    "lookup")
+        grep "^$2" "$PHONEBOOK_FILE" | awk '{print $1, $2}'
+        ;;
+    *)
+        echo "Usage: $0 {new <name> <number> | list | remove <name> | clear | lookup <name>}"
+        exit 1
+esac
+
