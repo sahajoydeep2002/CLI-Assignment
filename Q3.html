@@ -1,0 +1,54 @@
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <string> <filename>"
+    exit 1
+fi
+
+string="$1"
+file="$2"
+
+if [ ! -f "$file" ]; then
+    echo "File '$file' does not exist."
+    exit 1
+fi
+
+while true; do
+    echo "Menu:"
+    echo "a. Search"
+    echo "b. Insert the string at the beginning of the file"
+    echo "c. Insert the string at the end of the file"
+    echo "d. Insert at the beginning of the 5th line"
+    echo "e. Exit"
+    read -p "Enter your choice: " choice
+
+    case $choice in
+        "a")
+            echo "Searching for '$string' in '$file':"
+            grep "$string" "$file"
+            ;;
+        "b")
+            echo "$string" | cat - "$file" > temp && mv temp "$file"
+            echo "String inserted at the beginning of the file."
+            ;;
+        "c")
+            echo "$string" >> "$file"
+            echo "String inserted at the end of the file."
+            ;;
+        "d")
+            lines=$(wc -l < "$file")
+            if [ "$lines" -ge 5 ]; then
+                sed -i '5i'"$string"'' "$file"
+                echo "String inserted at the beginning of the 5th line."
+            else
+                echo "Error: File has less than 5 lines."
+            fi
+            ;;
+        "e")
+            echo "Exiting."
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice. Please select a valid option."
+            ;;
+    esac
+done
