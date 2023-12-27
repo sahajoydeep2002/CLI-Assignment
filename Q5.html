@@ -1,0 +1,57 @@
+
+DATABASE="database.txt"
+
+touch "$DATABASE"
+
+while true; do
+    # Display the menu
+    echo "Menu:"
+    echo "a. Add a record"
+    echo "b. Delete a record corresponding to a roll number"
+    echo "c. Find a record in the database corresponding to a roll number"
+    echo "d. Exit"
+    read -p "Enter your choice: " choice
+
+    case $choice in
+        "a")
+            # Adding a record
+            read -p "Enter Roll number: " roll
+            read -p "Enter Name: " name
+            read -p "Enter Semester: " semester
+            read -p "Enter Marks in Mathematics: " marks
+
+            # Append the record to the database file
+            echo "$roll,$name,$semester,$marks" >> "$DATABASE"
+            echo "Record added successfully."
+            ;;
+        "b")
+            # Deleting a record by roll number
+            read -p "Enter Roll number to delete: " roll_to_delete
+
+            # Create a temporary file excluding the record to be deleted
+            grep -v "^$roll_to_delete," "$DATABASE" > temp && mv temp "$DATABASE"
+            echo "Record with Roll number $roll_to_delete deleted, if exists."
+            ;;
+        "c")
+            # Finding a record by roll number
+            read -p "Enter Roll number to find: " roll_to_find
+
+            # Search for the record by roll number
+            found_record=$(grep "^$roll_to_find," "$DATABASE")
+
+            if [ -n "$found_record" ]; then
+                echo "Record found: $found_record"
+            else
+                echo "Record not found."
+            fi
+            ;;
+        "d")
+            # Exit the script
+            echo "Exiting."
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice. Please select a valid option."
+            ;;
+    esac
+done
